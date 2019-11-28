@@ -1,0 +1,138 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>Welcome to RBAR’s documentation! &#8212; WN v1 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="welcome-to-rbar-s-documentation">
+<h1>Welcome to RBAR’s documentation!<a class="headerlink" href="#welcome-to-rbar-s-documentation" title="Permalink to this headline">¶</a></h1>
+<p><strong>Overview</strong></p>
+<p>Receiver-Based AutoRate(RBAR) is a rate adaptive MAC protocol. This rate adaptation algorithm takes advantage of the control frames RTS/CTS transmitted at the basic data rate. In contrast to the existing schemes, its rate adaptation mechanism is in receiver instead of in the sender.</p>
+<p><strong>Motivation</strong></p>
+<p>The following observations led to the idea of this algorithm :</p>
+<ol class="arabic simple">
+<li><p>Rate selection can be improved by providing more timely and more complete channel quality information.</p></li>
+<li><p>Channel quality information is best acquired at the receiver.</p></li>
+<li><p>Transmitting channel quality information to the sender can be costly, both in terms of the resources consumed in transmitting the quantity of information needed as well as the potential loss in timeliness of the information due to transmission delays.</p></li>
+</ol>
+<p><strong>Basic Idea</strong></p>
+<p>The core idea is to allow the receiver to select the appropriate rate for the data packet during the RTS/CTS packet exchange.</p>
+<p>Advantages of this approach include :</p>
+<ol class="arabic simple">
+<li><p>The channel quality estimation mechanism can directly access all of the information made available to it by the receiving hardware, for more accurate rate selection.</p></li>
+<li><p>Since the rate selection is done during RTS/CTS exchange, the channel quality estimates are nearer to the actual transmission time of the data packet than in existing sender-based approaches.</p></li>
+<li><p>It can be implemented into IEEE 802.11</p></li>
+</ol>
+<p><strong>Theory</strong></p>
+<p>In RBAR, instead of carrying the duration of the reservation, the packets carry the modulation rate and size of the data packet. This modificattion serves the dual purpose of providing a mechanism by which the receiver can communicate the chosen rate to the sender, while still providing neighbouring nodes with enough information to calculate the duration of the requested reservation.</p>
+<p>The sender chooses a data rate based on some heuristic and then stores the rate and the size of the data packet into the RTS. Neighbouring node of sender, overhears the RTS, calculates the duration of the requested reservation using the rate and packet size carried in the RTS. The neighbouring node then updates its NAV(Network Allocation Vector) to reflect the reservation.</p>
+<p>While receiving the RTS, the receiver uses information available to it about the channel conditions to generate an estimate of the conditions for the impending data packet transmission. Receiver then selects the appropriate rate based on that estimate, and transmits it and the packet size in the CTS back to the sender. The neighbouring node of the receiver on overhearing the CTS, calculated the duration of the requested reservation similar to the procedure used earlier. Finally, sender responds to the receipt of the CTS by transmitting the data packet at the rate chosen by Receiver.</p>
+<p><strong>Modifications</strong></p>
+<p>Modifications to the standard 802.11 frames for RBAR are described below :</p>
+<ol class="arabic simple">
+<li><p>The standard 802.11 data frame has been changed to include a 32-bit check sequence positioned immediately after the source address field. The check sequence is used to protect the reservation sub header, which consists of the frame control, duration, destination address, source address and address 2 fields of the header. The new frame is distinguished by other MAC frames by a unique type code in the frame control field.</p></li>
+<li><p>The RTS and CTS control frames, have been changed to encode a 4 bit rate subfield and a 12 bit length subfield, in place of the 16 bit duration field in the standard IEEE 802.11 frames.</p></li>
+<li><p>The physical layer header has been divided into two 4 bit rate subfields. The first subfield, if non-empty, indicates the rate at which the reservation subheader will be transmitted, and the second subfield indicates the rate at which the remainder of the packet will be transmitted.</p></li>
+</ol>
+<div class="toctree-wrapper compound">
+</div>
+</div>
+<div class="section" id="indices-and-tables">
+<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h1>
+<ul class="simple">
+<li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
+<li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
+<li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></p></li>
+</ul>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">WN</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2019, Chandana Sri Lalitha.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.2.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/rbar.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

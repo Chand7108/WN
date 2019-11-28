@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>Welcome to BARA’s documentation! &#8212; WN v1 documentation</title>
+    <title>Welcome to BARA’s and RBAR’s documentation! &#8212; WN v1 documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -30,27 +30,124 @@
 
           <div class="body" role="main">
             
-  <div class="section" id="welcome-to-bara-s-documentation">
-<h1>Welcome to BARA’s documentation!<a class="headerlink" href="#welcome-to-bara-s-documentation" title="Permalink to this headline">¶</a></h1>
-<p><strong>Overview</strong>
-Beacon Auto Rate Adaption aka BARA uses a sender-based rate adaptation algorithm to determine proper instantaneous data rate, especially when control frames such as RTS/CTS are not available. Firstly, periodic mandatory control frame beacon is used to estimate initial data rate for sender at the beginning of a transmission. Then data rate is appropriately adapted during the transmission.</p>
-<p><strong>What is the basic for this algorithm?</strong>
-RTS/CTS control frames are optional in 802.11 standard to improve the data packet throughput. They are optionally used only when the size of the data packet exceeds a certain threshold. When RTS/CTS packets are not used, the sender based data rate adaptation is the only choice for data packet data rate adaptation.
-Usually, in multirate wireless networks, when a mobile station needs to send packets to an access point or other mobile station, it will send at basic data rate, heuristic rate or an estimated data rate. But sending them at estimated data rate can improve the throughput and entire network performance.
-A scenario when a station A wants to send packets to station B and station B does not transmit for a long time, then sender is unware of the link status and does not know what data rate is suitable. Hence is neccessary to estimate the initial data rate.
-BARA addresses these problems by calculating the initial data rate with periodic frame Beacon. Apart from this, two other mechanisms to enhance throughput and delay jitter.</p>
-<p><strong>Theory of Operation</strong>
-Beacon is mandatory for both infrastructure or infrastuctureless networks. Periodic beacons frames are received at a mobile station. This gives the mobile station the necessary statistics about channel to calculate the best data rate to the source mobile station. Then this data rate is recording into a table indexed by the destination mobile station address. When this mobile station needs to transmit data packet to some mobile station, it looks up the rate table for data rate that it can utilize to communicate with the target mobile station and instructs its physical layer to transmit the data packet by making use of the associated modulation corresponding to that data rate.</p>
+  <div class="section" id="welcome-to-bara-s-and-rbar-s-documentation">
+<h1>Welcome to BARA’s and RBAR’s documentation!<a class="headerlink" href="#welcome-to-bara-s-and-rbar-s-documentation" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="bara-beacon-auto-rate-adaptation">
+<h2>BARA : Beacon Auto Rate Adaptation<a class="headerlink" href="#bara-beacon-auto-rate-adaptation" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="overview">
+<h3>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h3>
+<p>Beacon Auto Rate Adaptation aka BARA uses a sender-based rate adaptation algorithm to determine proper instantaneous data rate, especially when control frames such as RTS/CTS are not available. Firstly, periodic mandatory control frame beacon is used to estimate initial data rate for sender at the beginning of a transmission. Then data rate is appropriately adapted during the transmission.</p>
+</div>
+<div class="section" id="what-is-the-basic-for-this-algorithm">
+<h3>What is the basic for this algorithm?<a class="headerlink" href="#what-is-the-basic-for-this-algorithm" title="Permalink to this headline">¶</a></h3>
+<p>RTS/CTS control frames are optional in 802.11 standard to improve the data packet throughput. They are optionally used only when the size of the data packet exceeds a certain threshold. When RTS/CTS packets are not used, the sender based data rate adaptation is the only choice for data packet data rate adaptation.</p>
+<p>Usually, in multirate wireless networks, when a mobile station needs to send packets to an access point or other mobile station, it will send at basic data rate, heuristic rate or an estimated data rate. But sending them at estimated data rate can improve the throughput and entire network performance.</p>
+<p>A scenario when a station A wants to send packets to station B and station B does not transmit for a long time, then sender is unware of the link status and does not know what data rate is suitable. Hence is neccessary to estimate the initial data rate.</p>
+<p>BARA addresses these problems by calculating the initial data rate with periodic frame Beacon. Apart from this, two other mechanisms to enhance throughput and delay jitter.</p>
+</div>
+<div class="section" id="theory-of-operation">
+<h3>Theory of Operation<a class="headerlink" href="#theory-of-operation" title="Permalink to this headline">¶</a></h3>
+<p>Beacon is mandatory for both infrastructure or infrastuctureless networks. Periodic beacons frames are received at a mobile station. This gives the mobile station the necessary statistics about channel to calculate the best data rate to the source mobile station. Then this data rate is recording into a table indexed by the destination mobile station address. When this mobile station needs to transmit data packet to some mobile station, it looks up the rate table for data rate that it can utilize to communicate with the target mobile station and instructs its physical layer to transmit the data packet by making use of the associated modulation corresponding to that data rate.</p>
+<div class="section" id="algorithm">
+<h4>Algorithm<a class="headerlink" href="#algorithm" title="Permalink to this headline">¶</a></h4>
+<p>The algorithm for the described operation is</p>
+<p>When packet is received</p>
+<p><strong>if</strong> (FrameType == Beacon)</p>
+<p>{</p>
+<blockquote>
+<div><p>Index = GetFrameMacAddress();</p>
+<p>ChannelStatistics = GetChannelStatisticsFromPhy();</p>
+<p><strong>if</strong> (ChannelStatistics &gt; ThresholdRate_11)</p>
+<p>Rate = 11Mbps</p>
+<p><strong>else if</strong> (ChannelStatistics &gt; ThresholdRate_5.5)</p>
+<p>Rate = 5.5Mbps</p>
+<p><strong>else if</strong> (ChannelStatistics &gt; ThresholdRate_2)</p>
+<p>Rate = 2Mbps</p>
+<p><strong>else</strong> {</p>
+<p>Rate = 0Mbps;</p>
+<p>Log(signal is too weak. No channel to destination mobile station);</p>
+<p>}</p>
+<p>RecordRate2Table(Rate, Index);</p>
+</div></blockquote>
+<p>}</p>
+<p><em>When data packet needs to transmit</em></p>
+<p>Index = GetDestinationMacAddress();</p>
+<p>GetRateFromTable(Rate, Index);</p>
+<p><strong>if</strong> (Rate == 0){</p>
+<blockquote>
+<div><p>Log(Transmission can not complete. No channel to destination mobile station);</p>
+<p><strong>return</strong> 0;</p>
+</div></blockquote>
+<p>}</p>
+<p>TransmitDataPacket(Rate);</p>
+</div>
+</div>
+<div class="section" id="adaptive-rate-adaptation-during-ongoing-communication">
+<h3>Adaptive Rate Adaptation During Ongoing Communication<a class="headerlink" href="#adaptive-rate-adaptation-during-ongoing-communication" title="Permalink to this headline">¶</a></h3>
+<p>Dynamic data estimation with only Beacon frame might not be real time, as Beacon frame can only be sensed every beacon interval, not estimated at any time. After the initial rate is estimated from history Beacon frame, an adaptive mechanism is used to predict data rate on both beacon frame and all other data the station can receive. The rate adaptation core procedure in Adaptive Rate Adaptation is same as Rate Adaptation with Beacon strategy. The only difference is an adaptive coefficient introduced to smooth the data rate on wireless channel with history rate information. One low pass filter f is introduced in the data rate prediction:</p>
+<p>ChanStat(present) = (1-f)ChanStat(previous) + f * ChanelStatistics</p>
+<p>(0 &lt; f &lt; 1)</p>
+<p>here, the ChanStat is the cumulative prediction of potential channel status. ChannelStatistics is instantaneous channel status.</p>
+<p>Adaptive Rate Adaptation operates with all sensed packets, including both broadcast control packets like Beacon and data transimission packets.</p>
+</div>
+<div class="section" id="basic-rate-retransmission">
+<h3>Basic Rate Retransmission<a class="headerlink" href="#basic-rate-retransmission" title="Permalink to this headline">¶</a></h3>
+<p>With sender based rate adaptation, it is impossible to accurately predict the actual data rate all the time. If sender fails to send a packet, the sender might not retry the transmission at the same data rate used during failed transmission, because the channel conditions might have deteriorated. Basic rate Retransmission solves this problem. When sender faces the above problem, it retries at basic data rate at which the receiver can certainly receive the packet, if it is still in communication range. The reason to use the basic data rate for retransmission is to avoid more failures. Then, when the sender receives acknowledgement packet for the basic data rate packet, it is able to adapt its instantaneous data rate for the next packet transmission based on the channel information of acknowledgement frame. With this the number of retransmissions after a transmission failure can be reduced to only one. This improves the netword performance especially when network load is heavy, because multiple retransmissions result in more delay between two successfull successive transmissions due to the binary exponential backoff in MAC protocol.</p>
+</div>
+<div class="section" id="conclusion">
+<h3>Conclusion<a class="headerlink" href="#conclusion" title="Permalink to this headline">¶</a></h3>
+<p>In this algorithm, Beacon frame is used to adapt the intial rate without extra overhead. Then data rate can be dynamically adapted from ongoing wireless communication channel statistics at the sender. Basic data rate retransmission helps minimize packet retransmission when a packet loss occurs. This algorithm is mainly helpful for data transmission without RTS/CTS control frames, but is applicable for protocols with RTS/CTS too.</p>
+<p>:Author : Chandana Jayaram (16CO107)</p>
+</div>
+<div class="section" id="rbar-receiver-based-auto-rate-protocol">
+<h3>RBAR : Receiver Based Auto Rate protocol<a class="headerlink" href="#rbar-receiver-based-auto-rate-protocol" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id1">
+<h3>Overview<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
+<p>Receiver-Based AutoRate(RBAR) is a rate adaptive MAC protocol. This rate adaptation algorithm takes advantage of the control frames RTS/CTS transmitted at the basic data rate. In contrast to the existing schemes, its rate adaptation mechanism is in receiver instead of in the sender.</p>
+</div>
+<div class="section" id="motivation">
+<h3>Motivation<a class="headerlink" href="#motivation" title="Permalink to this headline">¶</a></h3>
+<p>The following observations led to the idea of this algorithm :</p>
+<ol class="arabic simple">
+<li><p>Rate selection can be improved by providing more timely and more complete channel quality information.</p></li>
+<li><p>Channel quality information is best acquired at the receiver.</p></li>
+<li><p>Transmitting channel quality information to the sender can be costly, both in terms of the resources consumed in transmitting the quantity of information needed as well as the potential loss in timeliness of the information due to transmission delays.</p></li>
+</ol>
+</div>
+<div class="section" id="basic-idea">
+<h3>Basic Idea<a class="headerlink" href="#basic-idea" title="Permalink to this headline">¶</a></h3>
+<p>The core idea is to allow the receiver to select the appropriate rate for the data packet during the RTS/CTS packet exchange.</p>
+<p>Advantages of this approach include :</p>
+<ol class="arabic simple">
+<li><p>The channel quality estimation mechanism can directly access all of the information made available to it by the receiving hardware, for more accurate rate selection.</p></li>
+<li><p>Since the rate selection is done during RTS/CTS exchange, the channel quality estimates are nearer to the actual transmission time of the data packet than in existing sender-based approaches.</p></li>
+<li><p>It can be implemented into IEEE 802.11</p></li>
+</ol>
+</div>
+<div class="section" id="theory">
+<h3>Theory<a class="headerlink" href="#theory" title="Permalink to this headline">¶</a></h3>
+<p>In RBAR, instead of carrying the duration of the reservation, the packets carry the modulation rate and size of the data packet. This modificattion serves the dual purpose of providing a mechanism by which the receiver can communicate the chosen rate to the sender, while still providing neighbouring nodes with enough information to calculate the duration of the requested reservation.</p>
+<p>The sender chooses a data rate based on some heuristic and then stores the rate and the size of the data packet into the RTS. Neighbouring node of sender, overhears the RTS, calculates the duration of the requested reservation using the rate and packet size carried in the RTS. The neighbouring node then updates its NAV(Network Allocation Vector) to reflect the reservation.</p>
+<p>While receiving the RTS, the receiver uses information available to it about the channel conditions to generate an estimate of the conditions for the impending data packet transmission. Receiver then selects the appropriate rate based on that estimate, and transmits it and the packet size in the CTS back to the sender. The neighbouring node of the receiver on overhearing the CTS, calculated the duration of the requested reservation similar to the procedure used earlier. Finally, sender responds to the receipt of the CTS by transmitting the data packet at the rate chosen by Receiver.</p>
+<div class="section" id="modifications">
+<h4>Modifications<a class="headerlink" href="#modifications" title="Permalink to this headline">¶</a></h4>
+<p>Modifications to the standard 802.11 frames for RBAR are described below :</p>
+<ol class="arabic simple">
+<li><p>The standard 802.11 data frame has been changed to include a 32-bit check sequence positioned immediately after the source address field. The check sequence is used to protect the reservation sub header, which consists of the frame control, duration, destination address, source address and address 2 fields of the header. The new frame is distinguished by other MAC frames by a unique type code in the frame control field.</p></li>
+<li><p>The RTS and CTS control frames, have been changed to encode a 4 bit rate subfield and a 12 bit length subfield, in place of the 16 bit duration field in the standard IEEE 802.11 frames.</p></li>
+<li><p>The physical layer header has been divided into two 4 bit rate subfields. The first subfield, if non-empty, indicates the rate at which the reservation subheader will be transmitted, and the second subfield indicates the rate at which the remainder of the packet will be transmitted.</p></li>
+</ol>
+<dl class="field-list simple">
+<dt class="field-odd">Author</dt>
+<dd class="field-odd"><p>Sri lalitha Devi (16CO106)</p>
+</dd>
+</dl>
 <div class="toctree-wrapper compound">
 </div>
 </div>
-<div class="section" id="indices-and-tables">
-<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h1>
-<ul class="simple">
-<li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
-<li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
-<li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></p></li>
-</ul>
+</div>
+</div>
 </div>
 
 
@@ -68,26 +165,6 @@ Beacon is mandatory for both infrastructure or infrastuctureless networks. Perio
 
 
 
-
-<h3>Navigation</h3>
-
-<div class="relations">
-<h3>Related Topics</h3>
-<ul>
-  <li><a href="#">Documentation overview</a><ul>
-  </ul></li>
-</ul>
-</div>
-<div id="searchbox" style="display: none" role="search">
-  <h3 id="searchlabel">Quick search</h3>
-    <div class="searchformwrapper">
-    <form class="search" action="search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
-      <input type="submit" value="Go" />
-    </form>
-    </div>
-</div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
 
 
 

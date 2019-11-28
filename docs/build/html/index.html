@@ -1,0 +1,119 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>Welcome to BARA’s documentation! &#8212; WN v1 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="welcome-to-bara-s-documentation">
+<h1>Welcome to BARA’s documentation!<a class="headerlink" href="#welcome-to-bara-s-documentation" title="Permalink to this headline">¶</a></h1>
+<p><strong>Overview</strong>
+Beacon Auto Rate Adaption aka BARA uses a sender-based rate adaptation algorithm to determine proper instantaneous data rate, especially when control frames such as RTS/CTS are not available. Firstly, periodic mandatory control frame beacon is used to estimate initial data rate for sender at the beginning of a transmission. Then data rate is appropriately adapted during the transmission.</p>
+<p><strong>What is the basic for this algorithm?</strong>
+RTS/CTS control frames are optional in 802.11 standard to improve the data packet throughput. They are optionally used only when the size of the data packet exceeds a certain threshold. When RTS/CTS packets are not used, the sender based data rate adaptation is the only choice for data packet data rate adaptation.
+Usually, in multirate wireless networks, when a mobile station needs to send packets to an access point or other mobile station, it will send at basic data rate, heuristic rate or an estimated data rate. But sending them at estimated data rate can improve the throughput and entire network performance.
+A scenario when a station A wants to send packets to station B and station B does not transmit for a long time, then sender is unware of the link status and does not know what data rate is suitable. Hence is neccessary to estimate the initial data rate.
+BARA addresses these problems by calculating the initial data rate with periodic frame Beacon. Apart from this, two other mechanisms to enhance throughput and delay jitter.</p>
+<p><strong>Theory of Operation</strong>
+Beacon is mandatory for both infrastructure or infrastuctureless networks. Periodic beacons frames are received at a mobile station. This gives the mobile station the necessary statistics about channel to calculate the best data rate to the source mobile station. Then this data rate is recording into a table indexed by the destination mobile station address. When this mobile station needs to transmit data packet to some mobile station, it looks up the rate table for data rate that it can utilize to communicate with the target mobile station and instructs its physical layer to transmit the data packet by making use of the associated modulation corresponding to that data rate.</p>
+<div class="toctree-wrapper compound">
+</div>
+</div>
+<div class="section" id="indices-and-tables">
+<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h1>
+<ul class="simple">
+<li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
+<li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
+<li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></p></li>
+</ul>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="#">WN</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="#">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2019, Chandana Sri Lalitha.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.2.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/index.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
